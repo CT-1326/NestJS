@@ -1,45 +1,37 @@
 import { Injectable } from '@nestjs/common';
-import { Product } from './interfaces/product.interface';
-import { CreateProductInput } from "./dto/createProduct.dto";
+// import { Product } from './interfaces/product.interface';import { CreateProductInput } from './dto/createProduct.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Product } from './entities/product.entity';
+import { Repository } from 'typeorm';
+import { CreateProductInput } from './dto/createProduct.dto';
+import { UpdateProductInput } from './dto/updateProduct.dto';
 
 @Injectable()
 export class ProductsService {
-    private incrementID = 1;
-    private products: Product[] = [];
+  constructor(
+    @InjectRepository(Product)
+    private readonly productRepository: Repository<Product>,
+  ) {}
 
-    delete(id: number) {
-        const idx = this.products.findIndex(el => {
-            if (el.id == id) {
-                return true;
-            }
-        })
-        console.log(idx);
-        if (idx == -1) {
-            return false;
-        }
-        this.products.splice(idx, 1);
-        return true;
-    }
-    findAll() {
-        return this.products;
-    }
-    findOne(id: number) {
-        console.log(id);
-        const product = this.products.find(el => {
-            if (el.id == id) {
-                return true;
-            }
-        });
-        return product;
-    }
-    create(input: CreateProductInput) {
-        console.log(input);
-        const product = {
-            id: this.incrementID,
-            ...input,
-        }
-        this.incrementID++;
-        this.products.push(product);
-        return true;
-    }
+  async create(input: CreateProductInput): Promise<Product> {
+    const result = await this.productRepository.save({
+      ...input,
+    });
+
+    return result;
+  }
+
+  async modify(input: UpdateProductInput): Promise<Product> {
+    const product = await this.productRepository.findOne({
+      where: { id: input.id },
+    });
+
+    const newProduct = {
+      ...product,
+      ...input,
+    };
+
+    const result = await this.productRepository.save(newProduct);
+    return result;
+  }
 }

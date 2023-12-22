@@ -1,43 +1,53 @@
-import { Column, DeleteDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
-import { ProductSalesLocation } from "./productSalesLocation.entity";
-import { ProductCategory } from "./productCategory.entity";
-import { User } from "./user.entity";
-import { ProductTag } from "./productTags.entity";
+import {
+  Column,
+  DeleteDateColumn,
+  Entity,
+  JoinColumn,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { ProductSalesLocation } from './productSalesLocation.entity';
+import { ProductCategory } from './productCategory.entity';
+import { User } from './user.entity';
+import { ProductTag } from './productTags.entity';
 
 @Entity()
 export class Product {
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column()
-    name: string;
+  @Column()
+  name: string;
 
-    @Column()
-    description: string;
+  @Column()
+  description: string;
 
-    @Column()
-    price: number;
+  @Column()
+  price: number;
 
-    @Column({ default: false })
-    isSoldOut: boolean;
+  @Column({ default: false })
+  isSoldOut: boolean;
 
-    @DeleteDateColumn()
-    deletedAt: Date;
+  @DeleteDateColumn()
+  deletedAt: Date;
 
-    @DeleteDateColumn()
-    updateAt: Date;
+  @DeleteDateColumn()
+  updateAt: Date;
 
-    @JoinColumn()
-    @OneToOne(()=> ProductSalesLocation)
-    productSalesLocation: ProductSalesLocation;
+  @JoinColumn()
+  @OneToOne(() => ProductSalesLocation)
+  productSalesLocation: ProductSalesLocation;
 
-    @ManyToOne(()=> ProductCategory)
-    productCategory: ProductCategory;
+  @ManyToOne(() => ProductCategory)
+  productCategory: ProductCategory;
 
-    @ManyToOne(()=> User)
-    user: User;
+  @ManyToOne(() => User)
+  user: User;
 
-    @JoinTable()
-    @ManyToMany(()=> ProductTag, (pt)=> pt.products)
-    productTags: ProductTag[];
+  @JoinTable()
+  @ManyToMany(() => ProductTag, (pt) => pt.products)
+  productTags: ProductTag[];
 }
