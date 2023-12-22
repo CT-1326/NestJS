@@ -46,9 +46,27 @@ export class ProductsService {
         const result = await this
             .productRepository
             .softDelete({id: id});
-            
+
         return result.affected
             ? true
             : false;
+    }
+
+    async findAll(): Promise<Product[]> {
+        const result = await this
+            .productRepository
+            .find({});
+        return result;
+    }
+
+    async findOne(id : number): Promise<Product> {
+        const result = await this
+            .productRepository
+            .findOne({
+                where: {
+                    id: id
+                }
+            });
+        return result;
     }
 }

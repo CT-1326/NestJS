@@ -41,4 +41,18 @@ export class ProductsController {
             .productService
             .delete(id);
     }
+
+    @Get()
+    fetchProducts(): Promise<Product[]> {
+        return this
+            .productService
+            .findAll();
+    }
+
+    @Get(':id')
+    fetchProduct(@Param('id')id : number): Promise<Product> {
+        return this
+            .productService
+            .findOne(id);
+    }
 }
