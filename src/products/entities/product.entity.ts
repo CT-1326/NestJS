@@ -11,7 +11,6 @@ import {
 } from 'typeorm';
 import { ProductSalesLocation } from './productSalesLocation.entity';
 import { ProductCategory } from './productCategory.entity';
-import { User } from './user.entity';
 import { ProductTag } from './productTags.entity';
 
 @Entity()
@@ -43,9 +42,6 @@ export class Product {
 
   @ManyToOne(() => ProductCategory)
   productCategory: ProductCategory;
-
-  @ManyToOne(() => User)
-  user: User;
 
   @JoinTable()
   @ManyToMany(() => ProductTag, (pt) => pt.products)
