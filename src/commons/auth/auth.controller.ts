@@ -1,7 +1,7 @@
 import { Body, Controller, Post, Res, UnprocessableEntityException } from '@nestjs/common';
-import { UserService } from './user.service';
+import { UserService } from '../../user/user.service';
 import { AuthService } from './auth.service';
-import { LoginInput } from './dto/loginUser.dto';
+import { LoginInput } from '../../user/dto/loginUser.dto';
 import * as bcrypt from 'bcrypt'
 import { Response } from 'express';
 
@@ -31,7 +31,6 @@ export class AuthController {
         this.authService.setRefreshToken({user, res});
 
         const jwt = this.authService.getAccessToken({user});
-        console.log(jwt);
         
         return res.status(200).send(jwt);
     }
