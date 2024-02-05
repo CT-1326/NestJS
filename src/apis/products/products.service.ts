@@ -1,45 +1,56 @@
 import { Injectable } from '@nestjs/common';
 import { createProductInput } from './dto/createProduct.dto';
-import { Product } from './interface/product.interface';
+import { UpdateProductInput } from './dto/updateProduct.dto';
+// import { Product } from './interface/product.interface';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Product } from './entities/product.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class ProductsService {
-  private incrementID = 1;
-  private products: Product[] = [];
+  constructor(
+    @InjectRepository(Product)
+    private readonly productRepository: Repository<Product>,
+  ) {}
 
-  create(input: createProductInput) {
-    const product = {
-      id: this.incrementID,
+  async create(input: createProductInput): Promise<Product> {
+    const result = await this.productRepository.save({
+      ...input,
+    });
+
+    return result;
+  }
+
+  async modify(input: UpdateProductInput): Promise<Product> {
+    const product = await this.productRepository.findOne({
+      where: { id: input.id },
+    });
+
+    const newProduct = {
+      ...product,
       ...input,
     };
-    this.incrementID++;
-    this.products.push(product);
-    return true;
+
+    const result = await this.productRepository.save(newProduct);
+    return result;
   }
 
-  findAll() {
-    return this.products;
+  async delete(id: number): Promise<boolean> {
+    const result = await this.productRepository.softDelete({ id: id });
+    return result.affected ? true : false;
   }
 
-  findOne(id: number) {
-    const product = this.products.find((el) => {
-      if (el.id == id) {
-        return true;
-      }
+  async findAll(): Promise<Product[]> {
+    const result = await this.productRepository.find({
+      order: { id: 'DESC' },
     });
-    return product;
+    return result;
   }
 
-  delete(id: number) {
-    const idx = this.products.findIndex((el) => {
-      if (el.id == id) {
-        return true;
-      }
+  async findOne(id: number): Promise<Product> {
+    const result = await this.productRepository.findOne({
+      where: { id: id },
     });
-    if (idx == -1) {
-      return false;
-    }
-    this.products.splice(idx, 1);
-    return true;
+    return result;
   }
 }

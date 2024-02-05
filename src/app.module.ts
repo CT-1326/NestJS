@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from './config/TypeOrmConfigService';
+import { ProductsModule } from './apis/products/products.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { TypeOrmConfigService } from './config/TypeOrmConfigService';
     TypeOrmModule.forRootAsync({
       useClass: TypeOrmConfigService,
     }),
+    ProductsModule,
   ],
   controllers: [],
   providers: [],
