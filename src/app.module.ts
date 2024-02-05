@@ -1,8 +1,18 @@
 import { Module } from '@nestjs/common';
-import { ProductsModule } from './apis/products/products.module';
+import { ConfigModule } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { TypeOrmConfigService } from './config/TypeOrmConfigService';
 
 @Module({
-  imports: [ProductsModule],
+  imports: [
+    ConfigModule.forRoot({
+      cache: true,
+      isGlobal: true,
+    }),
+    TypeOrmModule.forRootAsync({
+      useClass: TypeOrmConfigService,
+    }),
+  ],
   controllers: [],
   providers: [],
 })
