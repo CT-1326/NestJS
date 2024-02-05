@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Product } from './product.entity';
 
 @Entity()
 export class productTags {
@@ -7,4 +8,7 @@ export class productTags {
 
   @Column({ unique: true })
   name: string;
+
+  @ManyToMany(() => Product, (products) => products.productTag)
+  products: Product[];
 }

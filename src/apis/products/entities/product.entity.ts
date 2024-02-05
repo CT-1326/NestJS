@@ -2,9 +2,17 @@ import {
   Column,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
+  ManyToMany,
+  ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { productSalesLocation } from './productSalesLocation.entity';
+import { productCategory } from './productCategory.entity';
+import { User } from './user.entity';
+import { productTags } from './productTags.entity';
 
 @Entity()
 export class Product {
@@ -28,4 +36,17 @@ export class Product {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @OneToOne(() => productSalesLocation)
+  @JoinColumn()
+  productSalesLocation: productSalesLocation;
+
+  @ManyToOne(() => productCategory)
+  productCategory: productCategory;
+
+  @ManyToOne(() => User)
+  user: User;
+
+  @ManyToMany(() => productTags, (productTag) => productTag.products)
+  productTag: productTags[];
 }
