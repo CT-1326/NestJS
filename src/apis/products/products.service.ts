@@ -13,44 +13,49 @@ export class ProductsService {
     private readonly productRepository: Repository<Product>,
   ) {}
 
-  async create(input: createProductInput): Promise<Product> {
-    const result = await this.productRepository.save({
-      ...input,
-    });
-
-    return result;
+  async create(input: createProductInput): Promise<boolean> {
+    try {
+      const query = this.productRepository.createQueryBuilder();
+      await query.insert().into(Product).values(input).execute();
+      return true;
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
   }
 
-  async modify(input: UpdateProductInput): Promise<Product> {
-    const product = await this.productRepository.findOne({
-      where: { id: input.id },
-    });
-
-    const newProduct = {
-      ...product,
-      ...input,
-    };
-
-    const result = await this.productRepository.save(newProduct);
-    return result;
+  async modify(id: number, input: UpdateProductInput): Promise<Product | null> {
+    const query = this.productRepository.createQueryBuilder();
+    const result = await query
+      .update(Product)
+      .set(input)
+      .where(`id = ${id}`)
+      .execute();
+    if (result.affected != 0) {
+      const newQuery = this.productRepository.createQueryBuilder('product');
+      return await newQuery.where('product.id = :id', { id }).getOne();
+    } else {
+      return null;
+    }
   }
 
   async delete(id: number): Promise<boolean> {
-    const result = await this.productRepository.softDelete({ id: id });
+    const query = this.productRepository.createQueryBuilder();
+    const result = await query
+      .update(Product)
+      .set({ deletedAt: new Date() })
+      .where(`id = ${id}`)
+      .execute();
     return result.affected ? true : false;
   }
 
   async findAll(): Promise<Product[]> {
-    const result = await this.productRepository.find({
-      order: { id: 'DESC' },
-    });
-    return result;
+    const query = this.productRepository.createQueryBuilder();
+    return await query.orderBy('id', 'DESC').getMany();
   }
 
   async findOne(id: number): Promise<Product> {
-    const result = await this.productRepository.findOne({
-      where: { id: id },
-    });
-    return result;
+    const query = this.productRepository.createQueryBuilder();
+    return await query.where(`id = ${id}`).getOne();
   }
 }

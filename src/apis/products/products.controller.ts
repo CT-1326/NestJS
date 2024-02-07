@@ -21,7 +21,7 @@ export class ProductsController {
   @Post()
   createProduct(
     @Body() createProductInput: createProductInput,
-  ): Promise<Product> {
+  ): Promise<boolean> {
     return this.productService.create(createProductInput);
   }
 
@@ -29,11 +29,8 @@ export class ProductsController {
   updateProduct(
     @Param('id') id: number,
     @Body() input: UpdateProductInput,
-  ): Promise<Product> {
-    if (id != input.id) {
-      throw new ForbiddenException();
-    }
-    return this.productService.modify(input);
+  ): Promise<Product | null> {
+    return this.productService.modify(id, input);
   }
 
   @Delete(':id')
