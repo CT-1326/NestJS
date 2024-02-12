@@ -3,16 +3,17 @@ import {
   DeleteDateColumn,
   Entity,
   JoinColumn,
+  JoinTable,
   ManyToMany,
   ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { productSalesLocation } from './productSalesLocation.entity';
-import { productCategory } from './productCategory.entity';
+import { ProductSalesLocation } from './productSalesLocation.entity';
+import { ProductCategory } from './productCategory.entity';
 import { User } from './user.entity';
-import { productTags } from './productTags.entity';
+import { ProductTag } from './productTags.entity';
 
 @Entity()
 export class Product {
@@ -37,16 +38,17 @@ export class Product {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @OneToOne(() => productSalesLocation)
+  @OneToOne(() => ProductSalesLocation)
   @JoinColumn()
-  productSalesLocation: productSalesLocation;
+  productSalesLocation: ProductSalesLocation;
 
-  @ManyToOne(() => productCategory)
-  productCategory: productCategory;
+  @ManyToOne(() => ProductCategory)
+  productCategory: ProductCategory;
 
   @ManyToOne(() => User)
   user: User;
 
-  @ManyToMany(() => productTags, (productTag) => productTag.products)
-  productTag: productTags[];
+  @ManyToMany(() => ProductTag, (productTag) => productTag.products)
+  @JoinTable()
+  productTag: ProductTag[];
 }

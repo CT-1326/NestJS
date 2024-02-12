@@ -4,65 +4,91 @@ import { UpdateProductInput } from './dto/updateProduct.dto';
 // import { Product } from './interface/product.interface';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from './entities/product.entity';
-import { Repository } from 'typeorm';
-import { productSalesLocation } from './entities/productSalesLocation.entity';
-import { productTags } from './entities/productTags.entity';
-import { productCategory } from './entities/productCategory.entity';
+import { Connection, Repository } from 'typeorm';
+import { ProductSalesLocation } from './entities/productSalesLocation.entity';
+import { ProductTag } from './entities/productTags.entity';
+import { ProductCategory } from './entities/productCategory.entity';
 
 @Injectable()
 export class ProductsService {
   constructor(
     @InjectRepository(Product)
     private readonly productRepository: Repository<Product>,
-    @InjectRepository(productSalesLocation)
-    private readonly productSalesLocationRepository: Repository<productSalesLocation>,
-    @InjectRepository(productTags)
-    private readonly productTagsRepository: Repository<productTags>,
-    @InjectRepository(productCategory)
-    private readonly productCategoryRepository: Repository<productCategory>,
+    @InjectRepository(ProductSalesLocation)
+    private readonly productSalesLocationRepository: Repository<ProductSalesLocation>,
+    @InjectRepository(ProductTag)
+    private readonly productTagsRepository: Repository<ProductTag>,
+    @InjectRepository(ProductCategory)
+    private readonly productCategoryRepository: Repository<ProductCategory>,
+    private connection: Connection,
   ) {}
 
   async create(input: CreateProductInput): Promise<Product> {
     const { productSalesLocation, productCategory, productTags, ...product } =
       input;
+    const queryRunner = await this.connection.createQueryRunner();
 
-    //위치 저장
-    const location = await this.productSalesLocationRepository.save({
-      ...productSalesLocation,
-    });
+    try {
+      // 트랜잭션 사용을 위해서 queryRunner 연결
+      await queryRunner.connect();
+      // 트랜잭션 시작
+      await queryRunner.startTransaction();
 
-    //카테고리 저장
-    const category = await this.productCategoryRepository.save({
-      name: productCategory,
-    });
+      //위치 저장
+      const location = await this.productSalesLocationRepository.create({
+        ...productSalesLocation,
+      });
+      await queryRunner.manager.save(location);
 
-    //태그 등록
-    const productTagList = await Promise.all(
-      productTags.map((el) => {
-        return new Promise(async (resolve) => {
-          const tagName = el.replace('#', '');
-          const existTag = await this.productTagsRepository.findOne({
-            where: { name: tagName },
+      //카테고리 저장
+      const category = await this.productCategoryRepository.create({
+        name: productCategory,
+      });
+      await queryRunner.manager.save(category);
+
+      //태그 등록
+      const productTagList = await Promise.all(
+        productTags.map((el) => {
+          return new Promise(async (resolve) => {
+            const tagName = el.replace('#', '');
+
+            const existTag = await queryRunner.manager
+              .createQueryBuilder(ProductTag, 'pt')
+              .where('pt.name = :name', { name: tagName })
+              .getOne();
+
+            if (existTag) {
+              resolve(existTag);
+            } else {
+              const newTag = await this.productTagsRepository.create({
+                name: tagName,
+              });
+              await queryRunner.manager.save(newTag);
+              resolve(newTag);
+            }
           });
-          if (existTag) {
-            resolve(existTag);
-          } else {
-            const newTag = await this.productTagsRepository.save({
-              name: tagName,
-            });
-            resolve(newTag);
-          }
-        });
-      }),
-    );
+        }),
+      );
 
-    const result = await this.productRepository.save({
-      ...product,
-      productSalesLocation: location,
-      productCategory: category,
-      productTags: productTagList,
-    });
-    return result;
+      const products = await this.productRepository.create({
+        ...product,
+        productSalesLocation: location,
+        productCategory: category,
+        productTag: productTagList,
+      });
+
+      const result = await queryRunner.manager.save(products);
+      // 트랜잭션 커밋
+      await queryRunner.commitTransaction();
+      return result;
+    } catch (error) {
+      // 트랜잭션 롤백
+      console.error(error);
+      await queryRunner.rollbackTransaction();
+    } finally {
+      // queryRunner 연결 종료
+      await queryRunner.release();
+    }
   }
 
   async modify(id: number, input: UpdateProductInput): Promise<Product> {
