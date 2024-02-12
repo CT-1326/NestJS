@@ -8,6 +8,9 @@ export class productSalesLocation {
   @Column()
   address: string;
 
+  @Column()
+  addressDeatil: string;
+
   @Column({ type: 'decimal' })
   lat: number;
 

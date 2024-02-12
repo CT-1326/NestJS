@@ -1,6 +1,7 @@
-import { IsInt, IsString } from 'class-validator';
+import { IsInt, IsObject, IsString, Min } from 'class-validator';
+import { CreateProductSalesLocationInput } from './createProductSalesLocation.dto';
 
-export class createProductInput {
+export class CreateProductInput {
   @IsString()
   name: string;
 
@@ -8,5 +9,15 @@ export class createProductInput {
   description: string;
 
   @IsInt()
+  @Min(0)
   price: number;
+
+  @IsObject()
+  productSalesLocation: CreateProductSalesLocationInput;
+
+  @IsString()
+  productCategory: string;
+
+  @IsString({ each: true })
+  productTags: string[];
 }

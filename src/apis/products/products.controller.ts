@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { createProductInput } from './dto/createProduct.dto';
+import { CreateProductInput } from './dto/createProduct.dto';
 import { UpdateProductInput } from './dto/updateProduct.dto';
 import { Product } from './interface/product.interface';
 
@@ -19,8 +19,8 @@ export class ProductsController {
 
   @Post()
   createProduct(
-    @Body() createProductInput: createProductInput,
-  ): Promise<boolean> {
+    @Body() createProductInput: CreateProductInput,
+  ): Promise<Product> {
     return this.productService.create(createProductInput);
   }
 
