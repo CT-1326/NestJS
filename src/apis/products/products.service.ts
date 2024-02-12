@@ -24,7 +24,7 @@ export class ProductsService {
     }
   }
 
-  async modify(id: number, input: UpdateProductInput): Promise<Product | null> {
+  async modify(id: number, input: UpdateProductInput): Promise<Product> {
     const query = this.productRepository.createQueryBuilder();
     const result = await query
       .update(Product)
@@ -41,11 +41,7 @@ export class ProductsService {
 
   async delete(id: number): Promise<boolean> {
     const query = this.productRepository.createQueryBuilder();
-    const result = await query
-      .update(Product)
-      .set({ deletedAt: new Date() })
-      .where(`id = ${id}`)
-      .execute();
+    const result = await query.softDelete().where(`id = ${id}`).execute();
     return result.affected ? true : false;
   }
 
