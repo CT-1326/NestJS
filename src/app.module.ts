@@ -3,6 +3,8 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from './config/TypeOrmConfigService';
 import { ProductsModule } from './apis/products/products.module';
+import { UserModule } from './apis/user/user.module';
+import { AuthModule } from './apis/auth/auth.module';
 
 @Module({
   imports: [
@@ -15,6 +17,8 @@ import { ProductsModule } from './apis/products/products.module';
       useClass: TypeOrmConfigService,
     }),
     ProductsModule,
+    UserModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [],
