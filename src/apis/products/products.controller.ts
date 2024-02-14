@@ -6,12 +6,14 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { createProductInput } from './dto/createProduct.dto';
 import { UpdateProductInput } from './dto/updateProduct.dto';
 import { Product } from './interface/product.interface';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('products')
 export class ProductsController {
@@ -37,6 +39,7 @@ export class ProductsController {
     return this.productService.delete(id);
   }
 
+  @UseGuards(AuthGuard('access'))
   @Get()
   fetchProducts(): Promise<Product[]> {
     return this.productService.findAll();

@@ -5,6 +5,7 @@ import { TypeOrmConfigService } from './config/TypeOrmConfigService';
 import { ProductsModule } from './apis/products/products.module';
 import { UserModule } from './apis/user/user.module';
 import { AuthModule } from './apis/auth/auth.module';
+import { CommonsModule } from './commons/commons.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { AuthModule } from './apis/auth/auth.module';
     ProductsModule,
     UserModule,
     AuthModule,
+    CommonsModule,
   ],
   controllers: [],
   providers: [],
