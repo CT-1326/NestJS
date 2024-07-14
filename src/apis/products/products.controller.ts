@@ -38,13 +38,13 @@ export class ProductsController {
     return this.productService.delete(id);
   }
 
-  // @Get(':id')
-  // fetchProduct(@Param('id') id: number): Product {
-  //   return this.productService.findeOne(id);
-  // }
+  @Get()
+  fetchProducts(): Promise<Product[]> {
+    return this.productService.findAll();
+  }
 
-  // @Get()
-  // fetchProducts(): Product[] {
-  //   return this.productService.findAll();
-  // }
+  @Get(':id')
+  fetchProduct(@Param('id') id: string): Promise<Product> {
+    return this.productService.findeOne(id);
+  }
 }

@@ -37,16 +37,16 @@ export class ProductsService {
     const result = await this.productRepository.softDelete({ id: id });
     return result.affected ? true : false;
   }
-  // findAll() {
-  //   return this.products;
-  // }
-  // findeOne(id: number) {
-  //   console.log(id, typeof id);
-  //   const product = this.products.find((el) => {
-  //     if (el.id == id) {
-  //       return true;
-  //     }
-  //   });
-  //   return product;
-  // }
+
+  async findAll(): Promise<Product[]> {
+    const result = await this.productRepository.find({});
+    return result;
+  }
+
+  async findeOne(id: string): Promise<Product> {
+    const result = await this.productRepository.findOne({
+      where: { id: id },
+    });
+    return result;
+  }
 }
