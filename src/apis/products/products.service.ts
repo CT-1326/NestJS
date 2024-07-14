@@ -32,6 +32,11 @@ export class ProductsService {
     const result = await this.productRepository.save(newProduct);
     return result;
   }
+
+  async delete(id: string): Promise<boolean> {
+    const result = await this.productRepository.softDelete({ id: id });
+    return result.affected ? true : false;
+  }
   // findAll() {
   //   return this.products;
   // }
@@ -43,18 +48,5 @@ export class ProductsService {
   //     }
   //   });
   //   return product;
-  // }
-  // delete(id: number) {
-  //   const idx = this.products.findIndex((el) => {
-  //     if (el.id == id) {
-  //       return true;
-  //     }
-  //   });
-  //   console.log(idx);
-  //   if (idx === -1) {
-  //     return false;
-  //   }
-  //   this.products.splice(idx, 1);
-  //   return true;
   // }
 }

@@ -33,6 +33,11 @@ export class ProductsController {
     return this.productService.modify(input);
   }
 
+  @Delete(':id')
+  deleteProduct(@Param('id') id: string): Promise<boolean> {
+    return this.productService.delete(id);
+  }
+
   // @Get(':id')
   // fetchProduct(@Param('id') id: number): Product {
   //   return this.productService.findeOne(id);
@@ -41,10 +46,5 @@ export class ProductsController {
   // @Get()
   // fetchProducts(): Product[] {
   //   return this.productService.findAll();
-  // }
-
-  // @Delete(':id')
-  // deleteProduct(@Param('id') id: number): boolean {
-  //   return this.productService.delete(id);
   // }
 }
