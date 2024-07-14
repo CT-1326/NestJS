@@ -14,7 +14,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
       username: this.configService.get<string>('DATABASE_USERNAME'),
       password: this.configService.get<string>('DATABASE_PASSWORD'),
       database: this.configService.get<string>('DATABASE_NAME'),
-      entities: [__dirname + '/apis/**/*.entity.*'],
+      entities: [__dirname + '/../apis/products/entities/*.entity{.ts,.js}'],
       synchronize: true, // 스키마 자동 관리
       logging: true, // 쿼리문 로깅
       dropSchema: false, // 앱 재시작 시 스키마 자동 삭제
