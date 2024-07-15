@@ -1,7 +1,7 @@
-import { IsInt, IsOptional, IsString } from 'class-validator';
+import { IsInt, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class UpdateProductInput {
-  @IsInt()
+  @IsNumber()
   id: number;
 
   @IsString()
