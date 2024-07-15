@@ -12,41 +12,54 @@ export class ProductsService {
     private readonly productRepository: Repository<Product>,
   ) {}
 
-  async create(input: CreateProductInput): Promise<Product> {
-    const result = await this.productRepository.save({
-      ...input,
-    });
-    return result;
+  async create(input: CreateProductInput): Promise<boolean> {
+    const result = await this.productRepository
+      .createQueryBuilder()
+      .insert()
+      .into(Product)
+      .values(input)
+      .execute();
+    return result ? true : false;
   }
 
-  async modify(input: UpdateProductInput): Promise<Product> {
-    const proudct = await this.productRepository.findOne({
-      where: { id: input.id },
-    });
-
-    const newProduct = {
-      ...proudct,
-      ...input,
-    };
-
-    const result = await this.productRepository.save(newProduct);
-    return result;
+  async modify(id: number, input: UpdateProductInput): Promise<Product> {
+    const result = this.productRepository
+      .createQueryBuilder()
+      .update(Product)
+      .set(input)
+      .where(`id=${id}`)
+      .execute();
+    if (result) {
+      return await this.productRepository
+        .createQueryBuilder()
+        .where(`id=${id}`)
+        .getOne();
+    }
   }
 
-  async delete(id: string): Promise<boolean> {
-    const result = await this.productRepository.softDelete({ id: id });
-    return result.affected ? true : false;
+  async delete(id: number): Promise<boolean> {
+    const result = await this.productRepository
+      .createQueryBuilder()
+      .update(Product)
+      .set({ deletedAt: new Date() })
+      .where(`id = ${id}`)
+      .execute();
+    return result ? true : false;
   }
 
   async findAll(): Promise<Product[]> {
-    const result = await this.productRepository.find({});
+    const result = await this.productRepository
+      .createQueryBuilder()
+      .orderBy('updatedAt', 'DESC')
+      .getMany();
     return result;
   }
 
-  async findeOne(id: string): Promise<Product> {
-    const result = await this.productRepository.findOne({
-      where: { id: id },
-    });
+  async findeOne(id: number): Promise<Product> {
+    const result = await this.productRepository
+      .createQueryBuilder()
+      .where(`id=${id}`)
+      .getOne();
     return result;
   }
 }

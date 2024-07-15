@@ -18,23 +18,23 @@ export class ProductsController {
   constructor(private readonly productService: ProductsService) {}
 
   @Post()
-  createProduct(@Body() input: CreateProductInput): Promise<Product> {
+  createProduct(@Body() input: CreateProductInput): Promise<boolean> {
     return this.productService.create(input);
   }
 
   @Put(':id')
   updateProduct(
-    @Param('id') id: string,
+    @Param('id') id: number,
     @Body() input: UpdateProductInput,
   ): Promise<Product> {
     if (id != input.id) {
       throw new ForbiddenException();
     }
-    return this.productService.modify(input);
+    return this.productService.modify(id, input);
   }
 
   @Delete(':id')
-  deleteProduct(@Param('id') id: string): Promise<boolean> {
+  deleteProduct(@Param('id') id: number): Promise<boolean> {
     return this.productService.delete(id);
   }
 
@@ -44,7 +44,7 @@ export class ProductsController {
   }
 
   @Get(':id')
-  fetchProduct(@Param('id') id: string): Promise<Product> {
+  fetchProduct(@Param('id') id: number): Promise<Product> {
     return this.productService.findeOne(id);
   }
 }

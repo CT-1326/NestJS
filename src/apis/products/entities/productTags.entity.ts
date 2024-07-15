@@ -5,8 +5,8 @@ import { Product } from './product.entity';
 
 @Entity()
 export class ProductTag {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn('increment')
+  id: number;
 
   @Column({ unique: true })
   name: string;
