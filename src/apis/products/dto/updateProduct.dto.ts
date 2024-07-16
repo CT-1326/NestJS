@@ -1,4 +1,11 @@
-import { IsInt, IsNumber, IsOptional, IsString } from 'class-validator';
+import {
+  IsInt,
+  IsNumber,
+  IsObject,
+  IsOptional,
+  IsString,
+} from 'class-validator';
+import { UpdateProductSalesLocationInput } from './UpdateProductSalesLocationInput.dto';
 
 export class UpdateProductInput {
   @IsNumber()
@@ -10,9 +17,18 @@ export class UpdateProductInput {
 
   @IsString()
   @IsOptional()
-  description: string;
+  description?: string;
 
   @IsInt()
   @IsOptional()
   price?: number;
+
+  @IsObject()
+  productSalesLocation: UpdateProductSalesLocationInput;
+
+  @IsString()
+  productCategory: string;
+
+  @IsString({ each: true })
+  productTags: string[];
 }

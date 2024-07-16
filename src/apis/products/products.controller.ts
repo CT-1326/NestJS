@@ -18,7 +18,7 @@ export class ProductsController {
   constructor(private readonly productService: ProductsService) {}
 
   @Post()
-  createProduct(@Body() input: CreateProductInput): Promise<boolean> {
+  createProduct(@Body() input: CreateProductInput): Promise<Product> {
     return this.productService.create(input);
   }
 
