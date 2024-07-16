@@ -180,6 +180,7 @@ export class ProductsService {
       .createQueryBuilder()
       .orderBy('updatedAt', 'DESC')
       .getMany();
+
     return result;
   }
 
@@ -188,6 +189,7 @@ export class ProductsService {
       .createQueryBuilder()
       .where(`id=${id}`)
       .getOne();
+
     return result;
   }
 }
