@@ -18,10 +18,10 @@ export class UserService {
       .createQueryBuilder()
       .where(`email = "${email}"`)
       .getOne();
-
     if (user) {
       throw new ConflictException('이미 등록된 이메일!');
     }
+
     const result = await this.userRepository
       .createQueryBuilder()
       .insert()
@@ -33,7 +33,6 @@ export class UserService {
         age,
       })
       .execute();
-
     return result ? true : false;
   }
 
