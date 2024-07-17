@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from './config/TypeOrmConfigService';
+import { AuthModule } from './apis/auth/auth.module';
+import { UserModule } from './apis/user/user.module';
 
 @Module({
   imports: [
@@ -13,6 +15,8 @@ import { TypeOrmConfigService } from './config/TypeOrmConfigService';
       // TypeORM 설정 비동기 처리
       useClass: TypeOrmConfigService,
     }),
+    AuthModule,
+    UserModule,
   ],
   controllers: [],
   providers: [],
