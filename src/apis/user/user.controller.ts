@@ -1,7 +1,9 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserInput } from './dto/createUserInput.dto';
 import * as bcrypt from 'bcrypt';
+import { AuthGuard } from '@nestjs/passport';
+import { User } from './entities/user.entity';
 
 @Controller('user')
 export class UserController {
@@ -19,5 +21,11 @@ export class UserController {
       password: hashedPassword,
     };
     return this.userService.create(user);
+  }
+
+  @UseGuards(AuthGuard('access'))
+  @Get(':email')
+  selectUsers(@Param('email') email: string): Promise<User> {
+    return this.userService.findOne(email);
   }
 }

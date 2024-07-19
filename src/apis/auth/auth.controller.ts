@@ -2,14 +2,18 @@ import {
   Body,
   Controller,
   Post,
+  Req,
   Res,
   UnprocessableEntityException,
+  UseGuards,
 } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { AuthService } from './auth.service';
 import { LoginInput } from './dto/loginInput.dto';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import * as bcrypt from 'bcrypt';
+import { AuthGuard } from '@nestjs/passport';
+import { IOAuthUser } from 'src/commons/auth/auth.userInterface';
 
 @Controller('auth')
 export class AuthController {
@@ -34,5 +38,11 @@ export class AuthController {
     this.authService.setRefreshToken({ user, res });
     const jwt = this.authService.getAccessToken({ user });
     return res.status(200).send(jwt);
+  }
+
+  @UseGuards(AuthGuard('refresh'))
+  @Post('refresh')
+  restoreAccessToken(@Req() req: Request & IOAuthUser) {
+    return this.authService.getAccessToken({ user: req.user });
   }
 }
